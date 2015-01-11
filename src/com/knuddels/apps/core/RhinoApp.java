@@ -58,7 +58,7 @@ public class RhinoApp {
 			byte[] encoded = Files.readAllBytes(Paths.get(this.app_path + File.separator + name));
 			return new String(encoded, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return "";
@@ -137,12 +137,18 @@ public class RhinoApp {
 		return this.scope;
 	}
 	
-	public void call(String object) {
-		NativeObject obj = (NativeObject) this.scope.get(object, this.scope);
-		Object[] o = obj.getIds();
+	public void call(String fn) {
+		Object test = this.scope.get(fn, this.scope);
 		
-		for(Object a : o) {
-			System.out.println(a.toString());
+		if(test instanceof NativeObject) {
+			NativeObject obj	= (NativeObject) test;
+			Object[] o			= obj.getIds();
+			
+			for(Object a : o) {
+				System.out.println(a.toString());
+			}			
+		} else {
+			System.err.println("Unknown Call");
 		}
 	}
 }

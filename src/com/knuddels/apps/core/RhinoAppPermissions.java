@@ -3,7 +3,7 @@ import org.mozilla.javascript.ClassShutter;
 
 public class RhinoAppPermissions implements ClassShutter {
 	public boolean visibleToScripts(String class_name) {
-		System.err.println("Permission Request: " + class_name);
+		//System.err.println("Permission Request: " + class_name);
 		
 		if(
 			class_name.contains("java.lang.String") ||
