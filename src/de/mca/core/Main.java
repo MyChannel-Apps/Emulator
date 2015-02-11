@@ -1,9 +1,13 @@
 package de.mca.core;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
-import javax.swing.JPanel;
+
+import javax.swing.BoxLayout;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -11,9 +15,11 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
 import com.knuddels.apps.core.RhinoApp;
+
+import de.mca.ui.SplitComponent;
 import de.mca.ui.SplitPanel;
-import de.mca.ui.SplitPanel.Alignment;
 import de.mca.ui.Window;
 
 @SuppressWarnings("static-access")
@@ -96,16 +102,14 @@ public class Main {
 	}
 	
 	public Main() {
-		window			= new Window("MyChannel-Apps.de - Emulator");
-		SplitPanel s	= new SplitPanel(Alignment.Horizontal);
-		JPanel a		= new JPanel();
-		//a.setBackground(Color.RED);
+		window				= new Window("MyChannel-Apps.de - Emulator");
+		SplitPanel s		= new SplitPanel(BoxLayout.Y_AXIS);
+		SplitComponent a	= new SplitComponent();
 		s.add(a);
-		JPanel b = new JPanel();
-		//b.setBackground(Color.BLUE);
+		SplitComponent b	= new SplitComponent();
 		s.add(b);
+		a.setPreferredSize(new Dimension(100, 0));
 		window.add(s);
 		window.open();
-		
 	}
 }

@@ -4,24 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Properties;
-
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.commonjs.module.ModuleScriptProvider;
-import org.mozilla.javascript.commonjs.module.Require;
-import org.mozilla.javascript.commonjs.module.RequireBuilder;
-import org.mozilla.javascript.commonjs.module.provider.ModuleSourceProvider;
-import org.mozilla.javascript.commonjs.module.provider.SoftCachingModuleScriptProvider;
-import org.mozilla.javascript.commonjs.module.provider.UrlModuleSourceProvider;
 
 public class RhinoApp {
 	private String app_path		= "";
@@ -29,6 +19,7 @@ public class RhinoApp {
 	private String app_name		= "";
 	private Context context;
 	private Scriptable scope;
+	private AppHook app;
 	
 	public RhinoApp(String app_path) {
 		this.app_path = app_path.replace("\\", "/");
@@ -101,12 +92,6 @@ public class RhinoApp {
 	
 	private void initApp(String api_content, String app_content) {
 		try {
-			// Prepare for require("Filename"); function
-			/*Object paths						= Arrays.asList(new URI("file:///" + this.getPath().replaceAll(" ", "%20") + "/"));
-			ModuleSourceProvider sourceProvider = new UrlModuleSourceProvider(paths, null);
-			ModuleScriptProvider scriptProvider = new SoftCachingModuleScriptProvider(sourceProvider);
-			RequireBuilder builder				= new RequireBuilder();
-			builder.setModuleScriptProvider(scriptProvider);*/
 			this.context						= Context.enter();
 			
 			// Set language version
@@ -118,12 +103,9 @@ public class RhinoApp {
 			
 			// Bind KnuddelsServer
 			ScriptableObject.putProperty(this.scope, "KnuddelsServer", Context.javaToJS(KnuddelsServer.get(), this.scope));
-			//Require require = builder.createRequire(this.context, this.scope);
-			
-			// Define/install the require function
-			//require.install(this.scope);
 			
 			// run the Code
+			KLogger.debug("Executing script: main.js");
 			this.context.evaluateString(this.scope, api_content + app_content, this.getAbsoluteName(), 1, null);
 		} catch(Exception e) {
 	         e.printStackTrace();
@@ -169,94 +151,5 @@ public class RhinoApp {
 		}
 		
 		return context.getImplementationVersion();
-	}
-	
-	/* JS Methods */	
-	public Object getPersistence() {
-		return null; // AppPersistence
-	}
-	
-	public Object getChannel() {
-		return null; // Channel
-	}
-	
-	public Object getAppDeveloper() {
-		return null; // User
-	}
-	
-	public String getAppId() {
-		return "KnuddelsDE.12345." + this.getAppName();
-	}
-	
-	public String getAppName() {
-		return "AppName";
-	}
-	
-	public int getAppVersion() {
-		return 1;
-	}
-	
-	public boolean userExists(String nick) {
-		return false;
-	}
-	
-	public int getUserId(String nick) {
-		return 0;
-	}
-	
-	public boolean canAccessUser(int userId) {
-		return false;
-	}
-	
-	public String getNickCorrectCase(int userId) {
-		return "";
-	}
-	
-	public Object getUser(int userId) {
-		return null; // User
-	}
-	
-	public static void refreshHooks() {
-		
-	}
-	
-	public Object getDefaultLogger() {
-		return null; // KLogger
-	}
-	
-	public String getFullImagePath(String imageName) {
-		return imageName;
-	}
-	
-	public String getFullSystemImagePath(String imageName) {
-		return imageName;
-	}
-	
-	public boolean isTestSystem() {
-		return true;
-	}
-	
-	public Object getAppManagers() {
-		return null; // User[]
-	}
-	
-	public void debug(String msg) {
-		
-	}
-	
-	public void info(String msg) {
-		
-	}
-	
-	public void warn(String msg) {
-		
-	}
-	
-	public void error(String msg) {
-		
-	}
-	
-	public void fatal(String msg) {
-		
 	}
 }
