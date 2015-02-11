@@ -50,11 +50,12 @@ public class SplitPanel extends Box {
 		return new_c;
 	}
 
+	/*
     @Override
     public Dimension getPreferredSize() {
         Dimension result = super.getPreferredSize();
         result.width = result.width > minSize.width ? result.width : minSize.width;
         result.height = result.height > minSize.height ? result.height : minSize.height;
         return result;
-    }
+    }*/
 }

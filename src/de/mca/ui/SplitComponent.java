@@ -10,8 +10,6 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -29,6 +27,7 @@ public class SplitComponent extends JPanel {
 		this.last_component = state;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void paintComponent(Graphics g) {
 		if(!last_component) {
@@ -45,6 +44,7 @@ public class SplitComponent extends JPanel {
 	}
 	
 	class Resizer extends JPanel implements MouseListener, MouseMotionListener {
+		@SuppressWarnings("unused")
 		private Point pointPressed;
 	    private Point pointReleased;
 	    private SplitComponent component;
@@ -79,20 +79,22 @@ public class SplitComponent extends JPanel {
 	    @Override
 	    public void mouseReleased(MouseEvent e) {
 	    	pointReleased		= e.getPoint();
-	    	int deltaX			= pointReleased.x; //- pointPressed.x;
-	    	int deltaY			= pointReleased.y - pointPressed.y;
-	    	Dimension size		= component.getSize();
-	    	
+	    	int deltaX			= pointReleased.x;
+	    	Dimension size		= component.getPreferredSize();
+
 	    	if(deltaX > 0) {
 	    		size.width		-= deltaX;
 	    	} else {
 	    		size.width		+= deltaX;
 	    	}
-	    	
-	    	if(size.width < 0) {
+
+	    	if(size.width < 0 || size.width > getWidth()) {
 	    		return;
 	    	}
+	    	
 
+    		System.out.println(size.width);
+	    	
 	    	component.setPreferredSize(new Dimension(size.width, size.height));
 	    	component.revalidate();
 	    }

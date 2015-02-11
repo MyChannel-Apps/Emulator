@@ -8,45 +8,52 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
+
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 public class RhinoApp {
+	private KLogger logger;
 	private String app_path		= "";
 	private String app_version	= "";
 	private String app_name		= "";
 	private Context context;
 	private Scriptable scope;
-	private AppHook app;
 	
 	public RhinoApp(String app_path) {
-		this.app_path = app_path.replace("\\", "/");
+		
+		KnuddelsServer.get().bindApp(this);
+		this.logger		= new KLogger();
+		this.app_path	= app_path.replace("\\", "/");
 		
 		if(this.app_path.endsWith("/") || this.app_path.endsWith(File.separator)) {
 			this.app_path = this.app_path.substring(0, this.app_path.length() - 1);
 		}
-		
-		System.out.println("Path: " + this.app_path);
 	}
 	
-	private String getPath() {
+	protected String getPath() {
 		return this.app_path;
 	}
 	
-	private String getName() {
+	public String getName() {
 		return this.app_name;
+	}
+	
+	public KLogger getLogger() {
+		return this.logger;
 	}
 	
 	private String getAbsoluteName() {
 		return this.getName() + "@" + this.getVersion();
 	}
 	
-	private String getVersion() {
+	protected String getVersion() {
 		return this.app_version;
 	}
-	
+
 	private String loadFile(String name) {
 		try {
 			byte[] encoded = Files.readAllBytes(Paths.get(this.app_path + File.separator + name));
@@ -93,6 +100,7 @@ public class RhinoApp {
 	private void initApp(String api_content, String app_content) {
 		try {
 			this.context						= Context.enter();
+			this.context.setOptimizationLevel(-1);
 			
 			// Set language version
 			this.context.setLanguageVersion(Context.VERSION_1_8);
@@ -108,9 +116,10 @@ public class RhinoApp {
 			KLogger.debug("Executing script: main.js");
 			this.context.evaluateString(this.scope, api_content + app_content, this.getAbsoluteName(), 1, null);
 		} catch(Exception e) {
-	         e.printStackTrace();
+	        // e.getMessage();
 		} finally {
 			if(Context.getCurrentContext() != null) {
+				System.err.println("Context EXIT");
 				Context.exit();
 			}
 		}
@@ -132,15 +141,26 @@ public class RhinoApp {
 		Object test = this.scope.get(fn, this.scope);
 		
 		if(test instanceof NativeObject) {
+			System.out.println("Call: " + fn);
 			NativeObject obj	= (NativeObject) test;
 			Object[] o			= obj.getIds();
 			
+			Function f = (Function) obj.get("onAppStart", this.scope);
+			f.call(this.context, this.scope, this.scope, new Object[] {});
 			for(Object a : o) {
 				System.out.println(a.toString());
-			}			
+			}	
 		} else {
-			System.err.println("Unknown Call");
+			System.err.println("Unknown Call: " + fn);
 		}
+	}
+	
+	public void eval(String content) {
+		this.context.evaluateString(this.scope, content, this.getAbsoluteName(), 1, null);
+	}
+
+	public void include(String fileName) {
+		this.eval(this.loadFile(fileName));
 	}
 
 	public static String getRhinoVersion() {

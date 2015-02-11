@@ -4,7 +4,7 @@ public class KnuddelAmount {
 	private double amount = 0.00;
 	
 	public KnuddelAmount(double knuddel) {
-		this.amount = amount;
+		this.amount = knuddel;
 	}
 	
 	public double asNumber() {

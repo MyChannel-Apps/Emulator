@@ -1,23 +1,36 @@
 package com.knuddels.apps.core;
+import org.mozilla.javascript.Function;
 import org.mozilla.javascript.ScriptableObject;
 
 import com.knuddels.apps.channel.Channel;
+import com.knuddels.apps.persistence.AppPersistence;
+import com.knuddels.apps.user.BotUser;
+import com.knuddels.apps.user.User;
 
 @SuppressWarnings("serial")
 public class KnuddelsServer extends ScriptableObject {
 	private final static KnuddelsServer instance;
-	private KLogger logger;
 	private Channel channel;
 	private int timer_id;
+	private RhinoApp app;
+	private AppPersistence persistence;
 	
 	static {
 		instance = new KnuddelsServer();
 	}
 	
 	public KnuddelsServer() {
-		this.logger				= new KLogger();
-		this.channel			= new Channel("Beispiel");
+		this.persistence		= new AppPersistence();
+		this.channel			= new Channel("Testchannel");
 		this.timer_id			= 1;
+	}
+	
+	public void bindApp(RhinoApp app) {
+		this.app = app;
+	}
+	
+	public RhinoApp getApp() {
+		return this.app;
 	}
 
 	public static KnuddelsServer get() {
@@ -29,19 +42,28 @@ public class KnuddelsServer extends ScriptableObject {
 		return "KnuddelsServer";
 	}
 	
-	private KLogger getDefaultLoggerInstance() {
-		return this.logger;
+	protected KLogger getDefaultLoggerInstance() {
+		return this.getApp().getLogger();
 	}
 	
 	private Channel getChannelInstance() {
 		return this.channel;
 	}
+	
+	private AppPersistence getAppPersistenceInstance() {
+		return this.persistence;
+	}
 
 	public static void require(String fileName) {
-		KLogger.debug("Executing script: " + fileName);
+		if(KnuddelsServer.get().getApp() == null) {
+			KLogger.error("Executing script: " + fileName);
+		} else {
+			KLogger.debug("Executing script: " + fileName);
+			KnuddelsServer.get().getApp().include(fileName);
+		}
 	}
 	
-	private int setIntervalInstance(Object fn, int delay) {
+	private int setIntervalInstance(Function fn, int delay) {
 		int id = this.timer_id++; 
 		/*
         ids[id] = new JavaAdapter(java.util.TimerTask,{run: fn});
@@ -49,77 +71,81 @@ public class KnuddelsServer extends ScriptableObject {
         return id;
 	}
 	
-	public static int setInterval(Object fn, int delay) {
+	public static int setInterval(Function fn, int delay) {
 		return KnuddelsServer.get().setIntervalInstance(fn, delay);
 	}
 	
 	/* Public Methods */
-	public Object getPersistence() {
-		return null; // AppPersistence
+	public static AppPersistence getPersistence() {
+		return KnuddelsServer.get().getAppPersistenceInstance();
 	}
 	
-	public Object getChannel() {
+	public static Channel getChannel() {
 		return KnuddelsServer.get().getChannelInstance();
 	}
 	
-	public Object getAppDeveloper() {
-		return null; // User
+	public static User getAppDeveloper() {
+		return null;
 	}
 	
-	public String getAppId() {
-		return "KnuddelsDE.12345." + this.getAppName();
+	public static String getAppId() {
+		return "KnuddelsEMU.0." + KnuddelsServer.getAppName();
 	}
 	
-	public String getAppName() {
-		return "AppName";
+	public static String getAppName() {
+		return KnuddelsServer.get().getApp().getName();
 	}
 	
-	public int getAppVersion() {
-		return 1;
+	public static String getAppVersion() {
+		return KnuddelsServer.get().getApp().getVersion();
 	}
 	
-	public boolean userExists(String nick) {
+	public static boolean userExists(String nick) {
 		return false;
 	}
 	
-	public int getUserId(String nick) {
+	public static int getUserId(String nick) {
 		return 0;
 	}
 	
-	public boolean canAccessUser(int userId) {
+	public static boolean canAccessUser(int userId) {
 		return false;
 	}
 	
-	public String getNickCorrectCase(int userId) {
+	public static String getNickCorrectCase(int userId) {
 		return "";
 	}
 	
-	public Object getUser(int userId) {
-		return null; // User
+	public static User getUser(int userId) {
+		return null;
 	}
 	
 	public static void refreshHooks() {
 		
 	}
 	
-	public Object getDefaultLogger() {
+	public static KLogger getDefaultLogger() {
 		return KnuddelsServer.get().getDefaultLoggerInstance();
 	}
 	
-	public String getFullImagePath(String imageName) {
-		return imageName;
+	public static BotUser getDefaultBotUser() {
+		return null;
 	}
 	
-	public String getFullSystemImagePath(String imageName) {
-		return imageName;
+	public static String getFullImagePath(String imageName) {
+		return String.format("%s/%s", KnuddelsServer.get().getApp().getPath(), imageName);
 	}
 	
-	public boolean isTestSystem() {
+	public static String getFullSystemImagePath(String imageName) {
+		return String.format("%s/%s", KnuddelsServer.get().getApp().getPath(), imageName);
+	}
+	
+	public static boolean isTestSystem() {
 		return true;
 	}
 	
-	public Object getAppManagers() {
-		return null; // User[]
+	public static User[] getAppManagers() {
+		return null;
 	}
 	
 	public void debug(String msg) {

@@ -28,10 +28,8 @@ public class KLogger extends ScriptableObject {
 		System.err.println(String.format("ERROR: %s", message));
 	}
 
-	
 	public static void fatal(String message) {
 		// red, bold
 		System.err.println(String.format("FATAL: %s", message));
 	}
-	// STATUS: 
 }

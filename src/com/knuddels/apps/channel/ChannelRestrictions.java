@@ -1,27 +1,29 @@
 package com.knuddels.apps.channel;
 
+import com.knuddels.apps.user.User;
+
 public class ChannelRestrictions {
-	public Object getMutedUsers() {
-		return null; // User[]
+	public User[] getMutedUsers() {
+		return new User[] {};
 	}
 	
-	public Object getColorMutedUsers() {
-		return null; // User[]
+	public User[] getColorMutedUsers() {
+		return new User[] {};
 	}
 	
-	public Object getLockedUsers() {
-		return null; // User[]
+	public User[] getLockedUsers() {
+		return new User[] {};
 	}
 	
-	public Object getChannelOwners() {
-		return null; // User[]
+	public User[] getChannelOwners() {
+		return new User[] {};
 	}
 	
-	public Object getChannelModerators() {
-		return null; // User[]
+	public User[] getChannelModerators() {
+		return new User[] {};
 	}
 	
-	public Object getEventModerators() {
-		return null; // User[]
+	public User[] getEventModerators() {
+		return new User[] {};
 	}
 }

@@ -1,5 +1,4 @@
 package de.mca.core;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +14,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
+import org.mozilla.javascript.NativeObject;
 
 import com.knuddels.apps.core.RhinoApp;
 
@@ -73,13 +75,17 @@ public class Main {
 		
 		System.out.println("App Path: " + args[0]);
 		
-		RhinoApp container = new RhinoApp(args[0]);
-		container.load();
-		container.call("App");
-	}
+		try {
+			RhinoApp container = new RhinoApp(args[0]);
+			container.load();
+			container.call("App");
+		} catch(Exception e) {
+			System.err.println("PANIC!!!! " + e.toString());
+		}
+ 	}
 	
 	public static void help() {
-		new HelpFormatter().printHelp("Apps", options, true);
+		new HelpFormatter().printHelp("Apps [options] <directory>", options, false);
 	}
 	
 	public static void version() {
@@ -105,10 +111,10 @@ public class Main {
 		window				= new Window("MyChannel-Apps.de - Emulator");
 		SplitPanel s		= new SplitPanel(BoxLayout.Y_AXIS);
 		SplitComponent a	= new SplitComponent();
+		a.setSize(new Dimension(100, 0));
 		s.add(a);
 		SplitComponent b	= new SplitComponent();
 		s.add(b);
-		a.setPreferredSize(new Dimension(100, 0));
 		window.add(s);
 		window.open();
 	}

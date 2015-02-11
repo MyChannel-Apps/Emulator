@@ -10,7 +10,7 @@ public class Persistence {
 	}
 	
 	public String getString(String key, String defaultValue) {
-		return "";
+		return defaultValue;
 	}
 	
 	public void deleteString(String key) {
@@ -36,7 +36,7 @@ public class Persistence {
 	public void deleteNumber(String key) {
 		
 	}
-
+	
 	public boolean hasObject(String key) {
 		return false;
 	}
@@ -46,7 +46,7 @@ public class Persistence {
 	}
 	
 	public Object getObject(String key, Object defaultValue) {
-		return null;
+		return defaultValue;
 	}
 	
 	public void deleteObject(String key) {

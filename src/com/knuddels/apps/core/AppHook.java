@@ -1,11 +1,18 @@
 package com.knuddels.apps.core;
+import com.knuddels.apps.channel.ChannelJoinPermission;
+import com.knuddels.apps.gamesupport.dice.DiceEvent;
+import com.knuddels.apps.messages.PrivateMessage;
+import com.knuddels.apps.messages.PublicMessage;
+import com.knuddels.apps.tools.KnuddelAmount;
+import com.knuddels.apps.user.BotUser;
+import com.knuddels.apps.user.User;
 
 public class AppHook {
-	public Object mayJoinChannel(Object user) {
+	public ChannelJoinPermission mayJoinChannel(User user) {
 		return null; // ChannelJoinPermission
 	}
 	
-	public boolean maySendPublicMessage(Object user) {
+	public boolean maySendPublicMessage(User user) {
 		return false;
 	}
 	
@@ -13,7 +20,7 @@ public class AppHook {
 		
 	}
 	
-	public void onKnuddelReceived(Object sender, Object receiver, Object knuddelAmount) {
+	public void onKnuddelReceived(User sender, BotUser receiver, KnuddelAmount knuddelAmount) {
 		
 	}
 	
@@ -21,11 +28,11 @@ public class AppHook {
 		
 	}
 	
-	public void onPrivateMessage(Object privateMessage) {
+	public void onPrivateMessage(PrivateMessage privateMessage) {
 		
 	}
 	
-	public void onPublicMessage(Object publicMessage) {
+	public void onPublicMessage(PublicMessage publicMessage) {
 		
 	}
 	
@@ -33,17 +40,17 @@ public class AppHook {
 		
 	}
 	
-	public void onUserDiced(Object diceEvent) {
+	public void onUserDiced(DiceEvent diceEvent) {
 		
 	}
 	
-	public void onUserJoined(Object user) {
+	public void onUserJoined(User user) {
 		
 	}
 	
-	public void onUserLeft(Object user) {
+	public void onUserLeft(User user) {
 		
 	}
 	
-	Object chatCommands = null;
+	//Object chatCommands = new Object();
 }
