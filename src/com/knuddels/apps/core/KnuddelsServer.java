@@ -1,7 +1,9 @@
 package com.knuddels.apps.core;
 import java.util.HashMap;
 import java.util.Timer;
+
 import org.mozilla.javascript.ScriptableObject;
+
 import com.knuddels.apps.channel.Channel;
 
 @SuppressWarnings("serial")
@@ -44,12 +46,20 @@ public class KnuddelsServer extends ScriptableObject {
 		return null;
 	}
 	
+	public static Object getAppDeveloper() {
+		return null;
+	}
+	
 	private Channel getChannelInstance() {
 		return this.channel;
 	}
 	
 	public static Channel getChannel() {
 		return KnuddelsServer.get().getChannelInstance();
+	}
+
+	public static void require(String fileName) {
+		System.err.println("LOAD " + fileName);
 	}
 	
 	private int setIntervalInstance(Object fn, int delay) {

@@ -27,6 +27,10 @@ KnuddelAmount				= com.knuddels.apps.tools.KnuddelAmount;
 StringOperations			= com.knuddels.apps.tools.StringOperations;
 RandomOperations			= com.knuddels.apps.tools.RandomOperations;
 
+function require(fileName) {
+	KnuddelsServer.require(fileName);
+}
+
 clearInterval = (function(id) {
 	KnuddelsServer.clearInterval(id);
 });

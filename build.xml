@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<project basedir="." default="default" name="Emulator">
+	<description>
+		Kompiliert den aktuellen Stand des Projekts und verpackt ihn in ein .jar-Archiv
+	</description>
+    <property environment="env" />
+    <property name="debuglevel" value="source,lines,vars" />
+    <property name="target" value="1.7" />
+    <property name="source" value="1.7" />
+    <property name="VERSION" value="1.0.0" />
+	
+	<!-- Start Build process -->
+	<target name="default">
+		<!-- Built-Date -->
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+		
+		<javac srcdir="src/" destdir="bin">
+			<classpath>
+				<pathelement location="libs/commons-cli-1.2.jar" />
+				<pathelement location="libs/js-1.2.jar" />
+				<pathelement location="libs/js.jar" />
+			</classpath>
+		</javac>
+		
+		<jar destfile="Emulator.jar" basedir="bin">
+			<manifest>
+				<attribute name="Copyright" value="2014 by MyChannel-Apps.de. All Rights Reserved." />
+				<attribute name="Author" value="MyChannel-Apps.de" />
+			    <attribute name="Built-By" value="${user.name}"/>
+			    <attribute name="Built-Date" value="${TODAY}"/>
+				<attribute name="Version" value="${VERSION}" />
+				<attribute name="Main-Class" value="de.mca.core.Main" />
+				<attribute name="Class-Path" value="libs/js.jar libs/js-1.2.jar libs/commons-cli-1.2.jar" />
+			</manifest>
+		</jar>
+		
+		<tstamp>
+			<format property="Build-Date" pattern="dd.MM.yyyy HH:mm:ss" />
+		</tstamp>
+	</target>
+</project>

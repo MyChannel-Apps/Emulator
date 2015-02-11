@@ -1,5 +1,5 @@
 package com.knuddels.apps.persistence;
 
-public class UserPersistence {
+public class UserPersistence extends Persistence {
 
 }

@@ -2,6 +2,7 @@ package de.mca.ui;
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -13,6 +14,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -24,11 +26,13 @@ public class Window extends JFrame {
 	private int border = 5;
 	private JPanel content;
 	private Window instance;
+	private JPanel body;
 	
 	public Window(String string) {
 		super(string);
 		
-		instance = this;
+		body		= new JPanel();
+		instance	= this;
 		
 		// Content Panel
 		content = new JPanel() {
@@ -66,6 +70,7 @@ public class Window extends JFrame {
 			public JPanel init() {
 				setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 				setBorder(new EmptyBorder(3, 0, 0, 3));
+			    setOpaque(false);
 			    
 				// Button: Minimize
 				add(new Button(new Callback() {
@@ -157,6 +162,14 @@ public class Window extends JFrame {
 			}
 		}.init());
 		
+		// Body
+		body.setOpaque(false);
+		body.setBackground(Color.YELLOW);
+		body.setLayout(new BorderLayout());
+		
+		content.setOpaque(false);
+		content.add(BorderLayout.CENTER, body);
+		
 		addWindowListener(new WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent windowEvent) {
@@ -186,5 +199,20 @@ public class Window extends JFrame {
 	
 	public void close() {
 		setVisible(false);
+	}
+	
+	@Override
+	public Component add(Component c) {
+		if(content.equals(c)) {
+			super.add(c);
+		} else {
+			if(c instanceof JComponent) {
+				((JComponent) c).setOpaque(false);
+			}
+			
+			body.add(c);
+		}
+		
+		return c;
 	}
 }

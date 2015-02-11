@@ -1,15 +1,18 @@
 package com.knuddels.apps.core;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Properties;
+
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
@@ -28,9 +31,9 @@ public class RhinoApp {
 	private Scriptable scope;
 	
 	public RhinoApp(String app_path) {
-		this.app_path = app_path;
+		this.app_path = app_path.replace("\\", "/");
 		
-		if(this.app_path.endsWith("\\") || this.app_path.endsWith("/") || this.app_path.endsWith(File.separator)) {
+		if(this.app_path.endsWith("/") || this.app_path.endsWith(File.separator)) {
 			this.app_path = this.app_path.substring(0, this.app_path.length() - 1);
 		}
 		
@@ -66,11 +69,15 @@ public class RhinoApp {
 	
 	private String loadAPI() {
 		try {
-			byte[] encoded	= Files.readAllBytes(Paths.get(getClass().getResource("/com/knuddels/apps/core/rhino.js").toURI()));
-			return new String(encoded, StandardCharsets.UTF_8);
+			StringBuffer buffer		= new StringBuffer();
+			BufferedReader reader	= new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/com/knuddels/apps/core/rhino.js"), "UTF-8"));
+			
+			for(int c = reader.read(); c != -1; c = reader.read()) {
+				buffer.append((char) c);
+			}
+
+			return buffer.toString();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 		
@@ -95,11 +102,11 @@ public class RhinoApp {
 	private void initApp(String api_content, String app_content) {
 		try {
 			// Prepare for require("Filename"); function
-			Object paths						= Arrays.asList(new URI("file:///" + this.getPath().replaceAll(" ", "%20") + "/"));
+			/*Object paths						= Arrays.asList(new URI("file:///" + this.getPath().replaceAll(" ", "%20") + "/"));
 			ModuleSourceProvider sourceProvider = new UrlModuleSourceProvider(paths, null);
 			ModuleScriptProvider scriptProvider = new SoftCachingModuleScriptProvider(sourceProvider);
 			RequireBuilder builder				= new RequireBuilder();
-			builder.setModuleScriptProvider(scriptProvider);
+			builder.setModuleScriptProvider(scriptProvider);*/
 			this.context						= Context.enter();
 			
 			// Set language version
@@ -111,17 +118,19 @@ public class RhinoApp {
 			
 			// Bind KnuddelsServer
 			ScriptableObject.putProperty(this.scope, "KnuddelsServer", Context.javaToJS(KnuddelsServer.get(), this.scope));
-			Require require = builder.createRequire(this.context, this.scope);
+			//Require require = builder.createRequire(this.context, this.scope);
 			
 			// Define/install the require function
-			require.install(this.scope);
+			//require.install(this.scope);
 			
 			// run the Code
 			this.context.evaluateString(this.scope, api_content + app_content, this.getAbsoluteName(), 1, null);
 		} catch(Exception e) {
 	         e.printStackTrace();
 		} finally {
-			Context.exit();
+			if(Context.getCurrentContext() != null) {
+				Context.exit();
+			}
 		}
 	}
 	
@@ -150,5 +159,104 @@ public class RhinoApp {
 		} else {
 			System.err.println("Unknown Call");
 		}
+	}
+
+	public static String getRhinoVersion() {
+		Context context = Context.getCurrentContext();
+		
+		if(context == null) {
+			context = Context.enter();
+		}
+		
+		return context.getImplementationVersion();
+	}
+	
+	/* JS Methods */	
+	public Object getPersistence() {
+		return null; // AppPersistence
+	}
+	
+	public Object getChannel() {
+		return null; // Channel
+	}
+	
+	public Object getAppDeveloper() {
+		return null; // User
+	}
+	
+	public String getAppId() {
+		return "KnuddelsDE.12345." + this.getAppName();
+	}
+	
+	public String getAppName() {
+		return "AppName";
+	}
+	
+	public int getAppVersion() {
+		return 1;
+	}
+	
+	public boolean userExists(String nick) {
+		return false;
+	}
+	
+	public int getUserId(String nick) {
+		return 0;
+	}
+	
+	public boolean canAccessUser(int userId) {
+		return false;
+	}
+	
+	public String getNickCorrectCase(int userId) {
+		return "";
+	}
+	
+	public Object getUser(int userId) {
+		return null; // User
+	}
+	
+	public static void refreshHooks() {
+		
+	}
+	
+	public Object getDefaultLogger() {
+		return null; // KLogger
+	}
+	
+	public String getFullImagePath(String imageName) {
+		return imageName;
+	}
+	
+	public String getFullSystemImagePath(String imageName) {
+		return imageName;
+	}
+	
+	public boolean isTestSystem() {
+		return true;
+	}
+	
+	public Object getAppManagers() {
+		return null; // User[]
+	}
+	
+	public void debug(String msg) {
+		
+	}
+	
+	public void info(String msg) {
+		
+	}
+	
+	public void warn(String msg) {
+		
+	}
+	
+	public void error(String msg) {
+		
+	}
+	
+	public void fatal(String msg) {
+		
 	}
 }
