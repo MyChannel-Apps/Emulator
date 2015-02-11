@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
-
 import javax.swing.BoxLayout;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -14,12 +12,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.NativeObject;
-
 import com.knuddels.apps.core.RhinoApp;
-
 import de.mca.ui.SplitComponent;
 import de.mca.ui.SplitPanel;
 import de.mca.ui.Window;

@@ -3,7 +3,8 @@ import org.mozilla.javascript.ClassShutter;
 
 public class RhinoAppPermissions implements ClassShutter {
 	public boolean visibleToScripts(String class_name) {
-		
+		return true;
+		/*
 		if(
 			class_name.contains("java.lang.Object") ||
 			class_name.contains("java.lang.String") ||
@@ -18,13 +19,15 @@ public class RhinoAppPermissions implements ClassShutter {
 			class_name.contains("com.knuddels.apps.channel.ChannelConfiguration") ||
 			class_name.contains("com.knuddels.apps.channel.ChannelRestrictions") ||
 			class_name.contains("com.knuddels.apps.channel.ChannelRights") ||
-			class_name.contains("com.knuddels.apps.persistence.AppPersistence")
+			class_name.contains("com.knuddels.apps.persistence.AppPersistence") ||
+			class_name.contains("com.knuddels.apps.core.KLogger") ||
+			class_name.contains("org.mozilla.javascript.EcmaError")
 		) {
 			System.out.println("	Permission Request: " + class_name);
 			return true;
 		}
 
 		System.err.println("	Permission Request: " + class_name);
-		return false;
+		return false;*/
 	}
 }

@@ -1,11 +1,18 @@
 package com.knuddels.apps.channel;
+import org.mozilla.javascript.ScriptableObject;
 import com.knuddels.apps.user.User;
 
-public class Channel {
+@SuppressWarnings("serial")
+public class Channel extends ScriptableObject {
 	private String name = "";
 	private ChannelConfiguration configuration;
 	private ChannelRestrictions restrictions;
 	private ChannelRights rights;
+	
+	@Override
+	public String getClassName() {
+		return "Channel";
+	}
 	
 	public Channel(String name) {
 		this.name			= name;

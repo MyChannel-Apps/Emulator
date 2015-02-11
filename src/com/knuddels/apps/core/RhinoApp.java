@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.mozilla.javascript.Context;
+import org.mozilla.javascript.EcmaError;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeObject;
 import org.mozilla.javascript.Scriptable;
@@ -24,8 +25,8 @@ public class RhinoApp {
 	private Scriptable scope;
 	
 	public RhinoApp(String app_path) {
-		
 		KnuddelsServer.get().bindApp(this);
+		
 		this.logger		= new KLogger();
 		this.app_path	= app_path.replace("\\", "/");
 		
@@ -113,7 +114,7 @@ public class RhinoApp {
 			ScriptableObject.putProperty(this.scope, "KnuddelsServer", Context.javaToJS(KnuddelsServer.get(), this.scope));
 			
 			// run the Code
-			KLogger.debug("Executing script: main.js");
+			KnuddelsServer.getDefaultLogger().debug("Executing script: main.js");
 			this.context.evaluateString(this.scope, api_content + app_content, this.getAbsoluteName(), 1, null);
 		} catch(Exception e) {
 	        // e.getMessage();
@@ -144,9 +145,15 @@ public class RhinoApp {
 			System.out.println("Call: " + fn);
 			NativeObject obj	= (NativeObject) test;
 			Object[] o			= obj.getIds();
+		
+			try {
+				Function f = (Function) obj.get("onAppStart", this.scope);
+				Object e = f.call(this.context, this.scope, this.scope, new Object[]{});
+				System.out.println(Context.jsToJava(e, Object.class));
+			} catch(EcmaError e) {
+				
+			}
 			
-			Function f = (Function) obj.get("onAppStart", this.scope);
-			f.call(this.context, this.scope, this.scope, new Object[] {});
 			for(Object a : o) {
 				System.out.println(a.toString());
 			}	
@@ -156,7 +163,11 @@ public class RhinoApp {
 	}
 	
 	public void eval(String content) {
-		this.context.evaluateString(this.scope, content, this.getAbsoluteName(), 1, null);
+		try {
+			this.context.evaluateString(this.scope, content, this.getAbsoluteName(), 1, null);
+		} catch(EcmaError e) {
+			
+		}
 	}
 
 	public void include(String fileName) {

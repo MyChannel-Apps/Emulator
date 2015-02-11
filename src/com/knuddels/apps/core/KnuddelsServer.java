@@ -1,7 +1,5 @@
 package com.knuddels.apps.core;
-import org.mozilla.javascript.Function;
 import org.mozilla.javascript.ScriptableObject;
-
 import com.knuddels.apps.channel.Channel;
 import com.knuddels.apps.persistence.AppPersistence;
 import com.knuddels.apps.user.BotUser;
@@ -10,6 +8,7 @@ import com.knuddels.apps.user.User;
 @SuppressWarnings("serial")
 public class KnuddelsServer extends ScriptableObject {
 	private final static KnuddelsServer instance;
+	private KLogger logger;
 	private Channel channel;
 	private int timer_id;
 	private RhinoApp app;
@@ -20,6 +19,7 @@ public class KnuddelsServer extends ScriptableObject {
 	}
 	
 	public KnuddelsServer() {
+		this.logger				= new KLogger();
 		this.persistence		= new AppPersistence();
 		this.channel			= new Channel("Testchannel");
 		this.timer_id			= 1;
@@ -42,8 +42,8 @@ public class KnuddelsServer extends ScriptableObject {
 		return "KnuddelsServer";
 	}
 	
-	protected KLogger getDefaultLoggerInstance() {
-		return this.getApp().getLogger();
+	public KLogger getDefaultLoggerInstance() {
+		return this.logger;
 	}
 	
 	private Channel getChannelInstance() {
@@ -56,14 +56,14 @@ public class KnuddelsServer extends ScriptableObject {
 
 	public static void require(String fileName) {
 		if(KnuddelsServer.get().getApp() == null) {
-			KLogger.error("Executing script: " + fileName);
+			KnuddelsServer.getDefaultLogger().error("Executing script: " + fileName);
 		} else {
-			KLogger.debug("Executing script: " + fileName);
+			KnuddelsServer.getDefaultLogger().debug("Executing script: " + fileName);
 			KnuddelsServer.get().getApp().include(fileName);
 		}
 	}
 	
-	private int setIntervalInstance(Function fn, int delay) {
+	private int setIntervalInstance(Object fn, int delay) {
 		int id = this.timer_id++; 
 		/*
         ids[id] = new JavaAdapter(java.util.TimerTask,{run: fn});
@@ -71,7 +71,7 @@ public class KnuddelsServer extends ScriptableObject {
         return id;
 	}
 	
-	public static int setInterval(Function fn, int delay) {
+	public static int setInterval(Object fn, int delay) {
 		return KnuddelsServer.get().setIntervalInstance(fn, delay);
 	}
 	
