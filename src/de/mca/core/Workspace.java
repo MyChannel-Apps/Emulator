@@ -3,7 +3,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Workspace {
@@ -76,12 +75,7 @@ public class Workspace {
 	public void exploreApp(String name) {
 		for(App app : apps) {
 			if(app.getConfig("appName") == name) {
-				try {
-					java.awt.Desktop.getDesktop().open(new File(app.getPath()));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
+				SystemHelper.openExplorer(new File(app.getPath()));
 				return;
 			}
 		}
@@ -99,8 +93,8 @@ public class Workspace {
 				
 				SystemHelper.deleteDirectory(new File(app.getPath()));
 				event.firePropertyChange("deleteApp", null, app);
-				event.firePropertyChange("reloadApps", old_apps, apps);
 				apps.remove(app);
+				event.firePropertyChange("reloadApps", old_apps, apps);
 				return;
 			}
 		}

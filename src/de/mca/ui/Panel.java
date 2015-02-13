@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
 public class Panel extends JPanel {
+	
 	public Panel() {
 		super();
 		setLayout(new BorderLayout());

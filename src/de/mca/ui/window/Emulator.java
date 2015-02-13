@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -23,7 +22,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-
 import de.mca.core.App;
 import de.mca.ui.Panel;
 import de.mca.ui.Splitpanel;
@@ -38,11 +36,11 @@ public class Emulator extends Window {
 	private Panel content;
 	private JList projects;
 	private DefaultListModel project_entries;
-	private PropertyChangeSupport event = new PropertyChangeSupport(this);
-	private Panel view_no_app_selected	= new NoAppSelected();
-	private Panel view_no_apps			= new NoApps();
-	private Panel view_app_container	= new AppContainer();
-	private int selected				= -1;
+	private PropertyChangeSupport event 	= new PropertyChangeSupport(this);
+	private Panel view_no_app_selected		= new NoAppSelected();
+	private Panel view_no_apps				= new NoApps();
+	private AppContainer view_app_container	= new AppContainer();
+	private int selected					= -1;
 	
 	public Emulator() {
 		super("MyChannel-Apps.de - Emulator");
@@ -144,42 +142,62 @@ public class Emulator extends Window {
 	
 	public void addProject(App app) {
 		this.project_entries.addElement(app); 
-		this.projects.repaint();
+		redraw();
 	}
 	
 	public void removeApp(App app) {
+		removeSelection();
 		this.project_entries.removeElement(app); 
-		this.projects.repaint();
+		initComplete();
+		redraw();
 	}
 	
 	public void selectApp(App app) {
+		view_app_container.setAppReference(app);
 		this.content.removeAll();
-		this.content.add(view_app_container);
-		this.splitpanel.setDividerSize(2);
+		
+		if(app == null) {
+			initComplete();
+		} else {
+			this.content.add(view_app_container);
+			redraw();
+		}
+	}
+	
+	private void redraw() {
+		if(this.project_entries.size() <= 0) {
+			this.splitpanel.setDividerSize(0);
+			this.splitpanel.setDividerLocation(0);
+		} else {
+			this.splitpanel.setDividerSize(2);			
+		}
+
+		this.projects.revalidate();
+		this.projects.repaint();
 		this.content.revalidate();
+		this.content.repaint();
+		this.splitpanel.revalidate();
+		this.splitpanel.repaint();
+		revalidate();
+		repaint();
 	}
 	
 	public void initComplete() {
 		this.content.removeAll();
 		
-		if(this.project_entries.isEmpty()) {
-			this.project_entries.clear();
+		if(this.project_entries.size() <= 0) {
 			this.content.add(view_no_apps);
 			this.projects.setPreferredSize(new Dimension(0, 0));
-			this.projects.revalidate();
-			this.splitpanel.setDividerSize(0);
 		} else {
 			this.content.add(view_no_app_selected);
-			this.splitpanel.setDividerSize(2);
 		}
-		
-		this.splitpanel.revalidate();
-		this.content.revalidate();
+
+		redraw();
 	}
 
 	public void removeSelection() {
 		this.projects.clearSelection();
-		initComplete();
+		selectApp(null);
 	}
 	
 	public void reloadApps(ArrayList<App> apps) {

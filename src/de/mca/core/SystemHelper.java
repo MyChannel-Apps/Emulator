@@ -1,5 +1,6 @@
 package de.mca.core;
 import java.io.File;
+import java.io.IOException;
 
 public class SystemHelper {
 	public static boolean deleteDirectory(File directory) {
@@ -17,5 +18,13 @@ public class SystemHelper {
 	        }
 	    }
 	    return(directory.delete());
+	}
+
+	public static void openExplorer(File file) {
+		try {
+			java.awt.Desktop.getDesktop().open(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

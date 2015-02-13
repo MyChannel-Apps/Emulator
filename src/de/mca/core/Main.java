@@ -73,7 +73,7 @@ public class Main {
 			container.load();
 			container.call("App");
 		} catch(Exception e) {
-			System.err.println("PANIC!!!! " + e.toString());
+			System.err.println("PANIC: " + e.toString());
 		}
  	}
 	
