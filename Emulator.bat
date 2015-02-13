@@ -1,2 +1,2 @@
 @echo off
-java -jar Emulator.jar --emulator
+Apps.bat --emulator
