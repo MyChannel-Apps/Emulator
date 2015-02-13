@@ -110,7 +110,7 @@ public class Main {
         	public void propertyChange(PropertyChangeEvent event) {
         		switch(event.getPropertyName()) {
         			case "addApp":
-                		window.addProject((App) event.getNewValue());
+                		window.addApp((App) event.getNewValue());
         			break;
         			case "initComplete":
                 		window.initComplete();
@@ -126,6 +126,9 @@ public class Main {
         			break;
         			case "deleteApp":
         				window.removeApp((App) event.getNewValue());        				
+        			break;
+        			case "refresh":
+        				window.redraw();
         			break;
         		}
         	}

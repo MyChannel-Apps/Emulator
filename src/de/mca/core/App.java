@@ -12,6 +12,11 @@ public class App {
 	public App(String path) {
 		this.path			= path;
 		this.config			= new Properties();
+		
+		refresh();
+	}
+	
+	public void refresh() {
 		InputStream input	= null;
 	 
 		try {
@@ -27,7 +32,7 @@ public class App {
 					e.printStackTrace();
 				}
 			}
-		}
+		}		
 	}
 	
 	public String getPath() {

@@ -140,8 +140,9 @@ public class Emulator extends Window {
 		event.removePropertyChangeListener(listener);
 	}
 	
-	public void addProject(App app) {
+	public void addApp(App app) {
 		this.project_entries.addElement(app); 
+		initComplete();
 		redraw();
 	}
 	
@@ -164,11 +165,15 @@ public class Emulator extends Window {
 		}
 	}
 	
-	private void redraw() {
+	public void redraw() {
 		if(this.project_entries.size() <= 0) {
 			this.splitpanel.setDividerSize(0);
 			this.splitpanel.setDividerLocation(0);
 		} else {
+			if(this.splitpanel.getDividerLocation() <= 2) {
+				this.splitpanel.setDividerLocation(200);
+			}
+			
 			this.splitpanel.setDividerSize(2);			
 		}
 
@@ -189,6 +194,7 @@ public class Emulator extends Window {
 			this.content.add(view_no_apps);
 			this.projects.setPreferredSize(new Dimension(0, 0));
 		} else {
+			this.projects.setPreferredSize(new Dimension(100, 0));
 			this.content.add(view_no_app_selected);
 		}
 
@@ -204,7 +210,7 @@ public class Emulator extends Window {
 		this.project_entries.removeAllElements();
 		
 		for(App app : apps) {
-			addProject(app);
+			addApp(app);
 		}
 		
 		initComplete();
