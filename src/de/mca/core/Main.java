@@ -3,6 +3,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
 import org.apache.commons.cli.CommandLine;
@@ -104,11 +105,44 @@ public class Main {
 		this.window			= new Emulator();
 
         this.workspace.addPropertyChangeListener(new PropertyChangeListener() {
-        	@Override
+        	@SuppressWarnings("unchecked")
+			@Override
         	public void propertyChange(PropertyChangeEvent event) {
         		switch(event.getPropertyName()) {
         			case "addApp":
                 		window.addProject((App) event.getNewValue());
+        			break;
+        			case "initComplete":
+                		window.initComplete();
+        			break;
+        			case "activateApp":
+        				window.selectApp((App) event.getNewValue());
+        			break;
+        			case "reloadApps":
+        				window.reloadApps((ArrayList<App>) event.getNewValue());
+        			break;
+        			case "deactivateApp":
+        				window.removeSelection();
+        			break;
+        			case "deleteApp":
+        				window.removeApp((App) event.getNewValue());        				
+        			break;
+        		}
+        	}
+		});
+        
+        this.window.addPropertyChangeListener(new PropertyChangeListener() {
+        	@Override
+        	public void propertyChange(PropertyChangeEvent event) {
+        		switch(event.getPropertyName()) {
+        			case "selectApp":
+        				workspace.selectApp((String) event.getNewValue());
+        			break;
+        			case "exploreApp":
+        				workspace.exploreApp((String) event.getNewValue());
+        			break;
+        			case "deleteApp":
+        				workspace.deleteApp((String) event.getNewValue());
         			break;
         		}
         	}

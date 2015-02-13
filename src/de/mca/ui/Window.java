@@ -143,7 +143,7 @@ public class Window extends JFrame {
 				
 				addMouseMotionListener(new MouseMotionAdapter() {
 					public void mouseDragged(MouseEvent e) {
-						if((instance.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
+						if(initialClick == null || (instance.getExtendedState() & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH) {
 							return;
 						}
 						

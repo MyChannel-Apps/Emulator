@@ -3,13 +3,14 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Workspace {
 	private String path					= "";
 	private PropertyChangeSupport event = new PropertyChangeSupport(this);
 	private ArrayList<App> apps			= new ArrayList<App>();
+	private App app_active;
 	
 	public Workspace(String path) {
 		if(path == null) {
@@ -45,7 +46,7 @@ public class Workspace {
 		File file = new File(this.getPath());
 		file.mkdirs();
 		
-		String[] directories = file.list(new FilenameFilter() {
+		file.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File current, String name) {
 				if(new File(current, name).isDirectory() && new File(current, name + File.separator + "app.config").exists() && new File(current, name + File.separator + "main.js").exists()) {
@@ -59,7 +60,49 @@ public class Workspace {
 			}
 		});
 		
-		System.out.println(Arrays.toString(directories));
-		event.firePropertyChange("initComplete", false, true);
+		event.firePropertyChange("initComplete", hasApps(), !hasApps());
+	}
+	
+	public void selectApp(String name) {
+		for(App app : apps) {
+			if(app.getConfig("appName") == name) {
+				event.firePropertyChange("activateApp", app_active, app);
+				app_active = app;
+				return;
+			}
+		}
+	}
+
+	public void exploreApp(String name) {
+		for(App app : apps) {
+			if(app.getConfig("appName") == name) {
+				try {
+					java.awt.Desktop.getDesktop().open(new File(app.getPath()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				return;
+			}
+		}
+	}
+
+	public void deleteApp(String name) {
+		for(App app : apps) {
+			if(app.getConfig("appName") == name) {
+				ArrayList<App> old_apps = apps;
+				
+				if(app_active == app) {
+					event.firePropertyChange("deactivateApp", app, null);
+					app_active = null;
+				}
+				
+				SystemHelper.deleteDirectory(new File(app.getPath()));
+				event.firePropertyChange("deleteApp", null, app);
+				event.firePropertyChange("reloadApps", old_apps, apps);
+				apps.remove(app);
+				return;
+			}
+		}
 	}
 }
