@@ -1,10 +1,10 @@
 package de.mca.core;
-import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
-import javax.swing.BoxLayout;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -13,15 +13,14 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import com.knuddels.apps.core.RhinoApp;
-import de.mca.ui.SplitComponent;
-import de.mca.ui.SplitPanel;
-import de.mca.ui.Window;
+import de.mca.ui.window.Emulator;
 
 @SuppressWarnings("static-access")
 public class Main {
-	private Window window;
+	private Emulator window;
 	private static CommandLine cli;
 	private static Options options;
+	private Workspace workspace;
 	
 	public static void main(String arguments[]) {
 		CommandLineParser parser	= new GnuParser();
@@ -101,14 +100,21 @@ public class Main {
 	}
 	
 	public Main() {
-		window				= new Window("MyChannel-Apps.de - Emulator");
-		SplitPanel s		= new SplitPanel(BoxLayout.Y_AXIS);
-		SplitComponent a	= new SplitComponent();
-		a.setSize(new Dimension(100, 0));
-		s.add(a);
-		SplitComponent b	= new SplitComponent();
-		s.add(b);
-		window.add(s);
-		window.open();
+		this.workspace		= new Workspace();
+		this.window			= new Emulator();
+
+        this.workspace.addPropertyChangeListener(new PropertyChangeListener() {
+        	@Override
+        	public void propertyChange(PropertyChangeEvent event) {
+        		switch(event.getPropertyName()) {
+        			case "addApp":
+                		window.addProject((App) event.getNewValue());
+        			break;
+        		}
+        	}
+		});
+        
+        this.workspace.init();
+        this.window.open();
 	}
 }
