@@ -1,11 +1,15 @@
 package de.mca.core;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.jar.Manifest;
 import java.util.jar.Attributes;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -13,7 +17,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.json.simple.JSONObject;
+
 import com.knuddels.apps.core.RhinoApp;
+
+import de.mca.api.API;
+import de.mca.api.Data;
 import de.mca.ui.window.Emulator;
 
 @SuppressWarnings("static-access")
@@ -46,7 +55,7 @@ public class Main {
         }
 		
 		if(cli.hasOption("v")) {
-			version();
+			version(true, "cli");
 			System.exit(-1);
             return;
         }
@@ -74,6 +83,7 @@ public class Main {
 			container.call("App");
 		} catch(Exception e) {
 			System.err.println("PANIC: " + e.toString());
+			e.printStackTrace();
 		}
  	}
 	
@@ -81,7 +91,7 @@ public class Main {
 		new HelpFormatter().printHelp("Apps [options] <directory>", options, false);
 	}
 	
-	public static void version() {
+	public static String version(boolean print, String type) {
 		String build_date			= "Unknown";
 		String build_version		= "Unknown";
 		
@@ -91,15 +101,36 @@ public class Main {
 	        Attributes attributes	= manifest.getMainAttributes();
 	        build_date				= attributes.getValue("Built-Date");
 	        build_version			= attributes.getValue("Version");
-	    } catch(IOException e) {
+	        
+	        if(build_version == null) {
+	        	build_version		= "Unknown";
+	        }
+	        
+	        if(build_date == null) {
+	        	build_date			= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+	        }
+	    } catch(Exception e) {
 	    	/* Do Nothing */
 	    }
 		
-		System.out.println("Emulator " + build_version + " (cli) (built: " + build_date + ")");
-		System.out.println("Copyright (c) 2015 MyChannel-Apps.de");
-		System.out.println(RhinoApp.getRhinoVersion());
+		String[] version = {
+			"Emulator " + build_version + " (" + type + ") (built: " + build_date + ")",
+			"Copyright (c) 2015 MyChannel-Apps.de",
+			RhinoApp.getRhinoVersion()
+		};
+		
+		if(print == true) {
+			for(String entry : version) {
+				System.out.println(entry);
+			}
+		} else {
+			return String.format("%s, %s", version[0], version[2]);
+		}
+		
+		return null;
 	}
 	
+	@SuppressWarnings("serial")
 	public Main() {
 		this.workspace		= new Workspace();
 		this.window			= new Emulator();
@@ -150,7 +181,22 @@ public class Main {
         		}
         	}
 		});
+
+        HashMap<String, String> java = new HashMap<String, String>();
+        String[] need = { "user.country", "java.version", "java.runtime.name", "os.name", "user.name" };
+        for(String a : need) { java.put(a, System.getProperty(a)); }
         
+        JSONObject response = API.request(new Data() {
+        	public Data set() {
+        		put("type",		"client");
+        		put("action",	"auth");
+        		put("token",	"123456");
+        		put("java",		java);
+        		
+        		return this;
+        	}
+		}.set());
+        System.out.println(response.toString());
         this.workspace.init();
         this.window.open();
 	}

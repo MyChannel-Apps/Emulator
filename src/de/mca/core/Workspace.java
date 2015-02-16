@@ -53,6 +53,8 @@ public class Workspace {
 	
 	public void init() {
 		System.out.println("Workspace: " + this.getPath());
+		String session = SystemHelper.fileContents(new File(this.getPath(), ".emu"));
+		System.out.println("Session: " + session);
 		File file = new File(this.getPath());
 		file.mkdirs();
 		

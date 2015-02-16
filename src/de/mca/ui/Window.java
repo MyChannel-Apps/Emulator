@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -199,6 +200,20 @@ public class Window extends JFrame {
 	
 	public void close() {
 		setVisible(false);
+	}
+	
+	public void setOverlay(JComponent c) {
+		if(getGlassPane().isVisible()) {
+			return;
+		}
+		
+		setGlassPane(c);
+		
+		for(MouseListener a : content.getMouseListeners()) {
+			c.addMouseListener(a);
+		}
+		
+		c.setVisible(true);
 	}
 	
 	@Override

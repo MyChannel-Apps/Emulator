@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
-
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.EcmaError;
 import org.mozilla.javascript.Function;
@@ -60,7 +59,7 @@ public class RhinoApp {
 			byte[] encoded = Files.readAllBytes(Paths.get(this.app_path + File.separator + name));
 			return new String(encoded, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 		
 		return "";
@@ -117,7 +116,7 @@ public class RhinoApp {
 			KnuddelsServer.getDefaultLogger().debug("Executing script: main.js");
 			this.context.evaluateString(this.scope, api_content + app_content, this.getAbsoluteName(), 1, null);
 		} catch(Exception e) {
-	        // e.getMessage();
+	        e.getMessage();
 		} finally {
 			if(Context.getCurrentContext() != null) {
 				System.err.println("Context EXIT");
@@ -147,11 +146,11 @@ public class RhinoApp {
 			Object[] o			= obj.getIds();
 		
 			try {
-				Function f = (Function) obj.get("onAppStart", this.scope);
-				Object e = f.call(this.context, this.scope, this.scope, new Object[]{});
+				Function f	= (Function) obj.get("onAppStart", this.scope);
+				Object e	= f.call(this.context, this.scope, this.scope, new Object[]{});
 				System.out.println(Context.jsToJava(e, Object.class));
 			} catch(EcmaError e) {
-				
+				e.printStackTrace();
 			}
 			
 			for(Object a : o) {
@@ -166,7 +165,7 @@ public class RhinoApp {
 		try {
 			this.context.evaluateString(this.scope, content, this.getAbsoluteName(), 1, null);
 		} catch(EcmaError e) {
-			
+			e.printStackTrace();
 		}
 	}
 

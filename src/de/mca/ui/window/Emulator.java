@@ -38,7 +38,7 @@ public class Emulator extends Window {
 	private DefaultListModel project_entries;
 	private PropertyChangeSupport event 	= new PropertyChangeSupport(this);
 	private Panel view_no_app_selected		= new NoAppSelected();
-	private Panel view_no_apps				= new NoApps();
+	private Panel view_no_apps				= new NoApps(this);
 	private AppContainer view_app_container	= new AppContainer();
 	private int selected					= -1;
 	

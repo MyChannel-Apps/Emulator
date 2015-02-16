@@ -1,0 +1,1 @@
+./Apps.sh --emulator

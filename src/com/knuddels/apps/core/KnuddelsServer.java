@@ -147,24 +147,4 @@ public class KnuddelsServer extends ScriptableObject {
 	public static User[] getAppManagers() {
 		return null;
 	}
-	
-	public void debug(String msg) {
-		
-	}
-	
-	public void info(String msg) {
-		
-	}
-	
-	public void warn(String msg) {
-		
-	}
-	
-	public void error(String msg) {
-		
-	}
-	
-	public void fatal(String msg) {
-		
-	}
 }

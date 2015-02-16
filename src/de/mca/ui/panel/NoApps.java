@@ -2,16 +2,22 @@ package de.mca.ui.panel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import de.mca.ui.Button;
 import de.mca.ui.Panel;
 import de.mca.ui.font.Glyphicons;
+import de.mca.ui.window.Emulator;
 
 @SuppressWarnings("serial")
 public class NoApps extends Panel {
-	public NoApps() {
-		BoxLayout box = new BoxLayout(this, BoxLayout.Y_AXIS);
+	private Emulator window;
+	
+	public NoApps(Emulator emulator) {
+		this.window		= emulator;
+		BoxLayout box	= new BoxLayout(this, BoxLayout.Y_AXIS);
 		box.maximumLayoutSize(this);
 
 		setLayout(box);
@@ -28,6 +34,26 @@ public class NoApps extends Panel {
 
 		Button button_create = new Button("Neue App erstellen", Button.Color.GREEN, "\uf067");
 		button_create.setAlignmentX(Component.CENTER_ALIGNMENT);
+		button_create.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				window.setOverlay(new AppCreator());
+				e.consume();
+			}
+		});
 		
 		add(new Panel());
 		add(label_icon);
