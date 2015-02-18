@@ -7,7 +7,9 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Properties;
+
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.EcmaError;
 import org.mozilla.javascript.Function;
@@ -59,7 +61,7 @@ public class RhinoApp {
 			byte[] encoded = Files.readAllBytes(Paths.get(this.app_path + File.separator + name));
 			return new String(encoded, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			// e.printStackTrace();
+			KnuddelsServer.getDefaultLogger().error(e.getMessage());
 		}
 		
 		return "";
@@ -76,7 +78,7 @@ public class RhinoApp {
 
 			return buffer.toString();
 		} catch (IOException e) {
-			e.printStackTrace();
+			KnuddelsServer.getDefaultLogger().error(e.getMessage());
 		}
 		
 		return "";
@@ -91,7 +93,7 @@ public class RhinoApp {
 			this.app_name		= config.getProperty("appName");
 			this.app_version	= config.getProperty("appVersion");
 		} catch (IOException e) {
-			e.printStackTrace();
+			KnuddelsServer.getDefaultLogger().error(e.getMessage());
 		}
 		
 		this.initApp(this.loadAPI(), main);
@@ -116,10 +118,9 @@ public class RhinoApp {
 			KnuddelsServer.getDefaultLogger().debug("Executing script: main.js");
 			this.context.evaluateString(this.scope, api_content + app_content, this.getAbsoluteName(), 1, null);
 		} catch(Exception e) {
-	        e.getMessage();
+			KnuddelsServer.getDefaultLogger().error(e.getMessage());
 		} finally {
 			if(Context.getCurrentContext() != null) {
-				System.err.println("Context EXIT");
 				Context.exit();
 			}
 		}
@@ -141,23 +142,25 @@ public class RhinoApp {
 		Object test = this.scope.get(fn, this.scope);
 		
 		if(test instanceof NativeObject) {
-			System.out.println("Call: " + fn);
+			KnuddelsServer.getDefaultLogger().debug("Call: " + fn);
 			NativeObject obj	= (NativeObject) test;
 			Object[] o			= obj.getIds();
-		
+
+			KnuddelsServer.getDefaultLogger().debug("Registred Methods: " + Arrays.toString(o));
+			
 			try {
 				Function f	= (Function) obj.get("onAppStart", this.scope);
 				Object e	= f.call(this.context, this.scope, this.scope, new Object[]{});
-				System.out.println(Context.jsToJava(e, Object.class));
+				Object a	= Context.jsToJava(e, Object.class);
+				
+				if(a.toString() != "undefined") {
+					System.out.println(a);
+				}
 			} catch(EcmaError e) {
-				e.printStackTrace();
+				KnuddelsServer.getDefaultLogger().error(e.getMessage());
 			}
-			
-			for(Object a : o) {
-				System.out.println(a.toString());
-			}	
 		} else {
-			System.err.println("Unknown Call: " + fn);
+			KnuddelsServer.getDefaultLogger().error("Unknown Call: " + fn);
 		}
 	}
 	
@@ -165,7 +168,7 @@ public class RhinoApp {
 		try {
 			this.context.evaluateString(this.scope, content, this.getAbsoluteName(), 1, null);
 		} catch(EcmaError e) {
-			e.printStackTrace();
+			KnuddelsServer.getDefaultLogger().error(e.getMessage());
 		}
 	}
 

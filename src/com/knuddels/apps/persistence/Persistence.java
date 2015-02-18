@@ -1,31 +1,13 @@
 package com.knuddels.apps.persistence;
-import java.lang.reflect.Member;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.mozilla.javascript.FunctionObject;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-
 @SuppressWarnings("serial")
-public class Persistence  extends FunctionObject {
-	public Persistence(String arg0, Member arg1, Scriptable arg2) {
-		super(arg0, arg1, arg2);
-		// TODO Auto-generated constructor stub
-	}
-
+public class Persistence {
 	private String table = "app";
 	
-	@Override
-	public String getClassName() {
-		return "Persistence";
-	}
-	
-	/*
 	public Persistence() {
 		this("app");
 	}
@@ -33,7 +15,7 @@ public class Persistence  extends FunctionObject {
 	public Persistence(String table) {
 		this.table = table;
 		connect();
-	}*/
+	}
 	
 	private Connection connect() {
 		Connection connection = null;
@@ -82,7 +64,7 @@ public class Persistence  extends FunctionObject {
 	}
 	
 	public String getString(String key, String defaultValue) {
-		Connection con	= null;
+		/*Connection con	= null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 	
@@ -106,7 +88,7 @@ public class Persistence  extends FunctionObject {
 				   e.printStackTrace();
 			   }
 		   }
-		}
+		}*/
 		
 		return defaultValue;
 	}

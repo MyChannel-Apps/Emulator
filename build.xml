@@ -21,6 +21,8 @@
 				<pathelement location="libs/commons-cli-1.2.jar" />
 				<pathelement location="libs/js-1.2.jar" />
 				<pathelement location="libs/js.jar" />
+				<pathelement location="libs/sqlite-jdbc-3.8.7.jar" />
+				<pathelement location="libs/json-simple-1.1.1.jar" />
 			</classpath>
 		</javac>
 		
@@ -32,7 +34,7 @@
 			    <attribute name="Built-Date" value="${TODAY}"/>
 				<attribute name="Version" value="${VERSION}" />
 				<attribute name="Main-Class" value="de.mca.core.Main" />
-				<attribute name="Class-Path" value="libs/js.jar libs/js-1.2.jar libs/commons-cli-1.2.jar" />
+				<attribute name="Class-Path" value="libs/js.jar libs/js-1.2.jar libs/commons-cli-1.2.jar libs/sqlite-jdbc-3.8.7.jar libs/json-simple-1.1.1.jar" />
 			</manifest>
 		</jar>
 		

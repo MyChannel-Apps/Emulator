@@ -12,7 +12,7 @@ public class KnuddelsServer extends ScriptableObject {
 	private Channel channel;
 	private int timer_id;
 	private RhinoApp app;
-	private AppPersistence persistence;
+	//private AppPersistence persistence;
 	
 	static {
 		instance = new KnuddelsServer();
@@ -20,7 +20,7 @@ public class KnuddelsServer extends ScriptableObject {
 	
 	public KnuddelsServer() {
 		this.logger				= new KLogger();
-		this.persistence		= new AppPersistence();
+		//this.persistence		= new AppPersistence();
 		this.channel			= new Channel("Testchannel");
 		this.timer_id			= 1;
 	}
@@ -51,7 +51,7 @@ public class KnuddelsServer extends ScriptableObject {
 	}
 	
 	private AppPersistence getAppPersistenceInstance() {
-		return this.persistence;
+		return null; //this.persistence;
 	}
 
 	public static void require(String fileName) {

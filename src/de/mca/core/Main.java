@@ -19,6 +19,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.json.simple.JSONObject;
 
+import com.knuddels.apps.core.KnuddelsServer;
 import com.knuddels.apps.core.RhinoApp;
 
 import de.mca.api.API;
@@ -72,17 +73,17 @@ public class Main {
 		}
 		
 		if(cli.hasOption("l")) {
-			System.out.println("Logfile: " + cli.getOptionValue("l"));
+			KnuddelsServer.getDefaultLogger().info("Logfile: " + cli.getOptionValue("l"));
         }
 		
-		System.out.println("App Path: " + args[0]);
+		KnuddelsServer.getDefaultLogger().info("App Path: " + args[0]);
 		
 		try {
 			RhinoApp container = new RhinoApp(args[0]);
 			container.load();
 			container.call("App");
 		} catch(Exception e) {
-			System.err.println("PANIC: " + e.toString());
+			KnuddelsServer.getDefaultLogger().panic(e.toString());
 			e.printStackTrace();
 		}
  	}
